@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Världens Tider</title>
+    <script>
+        function fetchTime() {
+            let country = document.getElementById("country").value;
+            if (!country) return;
+
+            fetch(`/get_time?country=${country}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById("result").innerHTML = `<p style="color:red;">${data.error}</p>`;
+                    } else {
+                        document.getElementById("result").innerHTML = `
+                            <h3>${data.country}</h3>
+                            <p><strong>Tidszon:</strong> ${data.timezone}</p>
+                            <p><strong>Tid:</strong> ${data.current_time}</p>
+                        `;
+                    }
+                })
+                .catch(error => console.error("Fel vid hämtning av tid:", error));
+        }
+    </script>
+</head>
+<body>
+    <h1>Världens Tider</h1>
+    <label for="country">Välj ett land:</label>
+    <select id="country">
+        {% for country in countries %}
+        <option value="{{ country }}">{{ country }}</option>
+        {% endfor %}
+    </select>
+    <button onclick="fetchTime()">Visa Tid</button>
+
+    <div id="result"></div>
+</body>
+</html>
